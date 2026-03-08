@@ -1,39 +1,45 @@
 /* ======================
-   typing animation
+typing animation
 ====================== */
 
-const text = "Java Developer | Problem Solver";
-let index = 0;
-const speed = 70;
+const text="Java Developer | Problem Solver";
+let i=0;
 
-function typeEffect(){
-const el = document.getElementById("typing");
+function typing(){
 
-if(index < text.length){
-el.innerHTML += text.charAt(index);
-index++;
-setTimeout(typeEffect, speed);
+const el=document.getElementById("typing");
+
+if(i<text.length){
+
+el.innerHTML+=text.charAt(i);
+i++;
+
+setTimeout(typing,70);
+
 }
+
 }
 
-typeEffect();
+typing();
 
 
 
 /* ======================
-   scroll reveal
+scroll animation
 ====================== */
 
-const sections = document.querySelectorAll("section");
+const sections=document.querySelectorAll("section");
 
 window.addEventListener("scroll",()=>{
 
 sections.forEach(sec=>{
 
-const top = sec.getBoundingClientRect().top;
+const top=sec.getBoundingClientRect().top;
 
-if(top < window.innerHeight - 100){
+if(top<window.innerHeight-100){
+
 sec.classList.add("show");
+
 }
 
 });
@@ -43,100 +49,102 @@ sec.classList.add("show");
 
 
 /* ======================
-   cursor glow
+cursor glow
 ====================== */
 
-const cursor = document.createElement("div");
+const cursor=document.createElement("div");
+
 cursor.classList.add("cursor");
+
 document.body.appendChild(cursor);
 
-document.addEventListener("mousemove", e => {
+document.addEventListener("mousemove",e=>{
 
-cursor.style.left = e.clientX + "px";
-cursor.style.top = e.clientY + "px";
-
-});
-
-
-
-/* ======================
-   gyroscopic tilt
-====================== */
-
-document.addEventListener("mousemove",(e)=>{
-
-const x = (window.innerWidth/2 - e.pageX)/30;
-const y = (window.innerHeight/2 - e.pageY)/30;
-
-document.querySelector("header").style.transform =
-`rotateY(${x}deg) rotateX(${y}deg)`;
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
 
 });
 
 
 
 /* ======================
-   3D particle background
+floating stones
 ====================== */
 
-const canvas = document.createElement("canvas");
-canvas.id = "particles";
-document.body.appendChild(canvas);
+let stones=[];
 
-const ctx = canvas.getContext("2d");
+for(let s=0;s<12;s++){
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let stone=document.createElement("div");
 
-let particles = [];
+stone.classList.add("stone");
 
-for(let i=0;i<120;i++){
+let size=40+Math.random()*80;
 
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:Math.random()*2,
-speedX:(Math.random()-0.5)*0.5,
-speedY:(Math.random()-0.5)*0.5
+stone.style.width=size+"px";
+stone.style.height=size+"px";
+
+stone.style.left=Math.random()*window.innerWidth+"px";
+stone.style.top=Math.random()*window.innerHeight+"px";
+
+document.body.appendChild(stone);
+
+stones.push({
+
+el:stone,
+
+x:Math.random()*window.innerWidth,
+
+y:Math.random()*window.innerHeight,
+
+speedX:(Math.random()-0.5)*0.4,
+
+speedY:(Math.random()-0.5)*0.4
+
 });
 
 }
 
-function animateParticles(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
 
-particles.forEach(p=>{
+function animateStones(){
 
-p.x += p.speedX;
-p.y += p.speedY;
+stones.forEach(s=>{
 
-if(p.x > canvas.width) p.x = 0;
-if(p.x < 0) p.x = canvas.width;
+s.x+=s.speedX;
+s.y+=s.speedY;
 
-if(p.y > canvas.height) p.y = 0;
-if(p.y < 0) p.y = canvas.height;
+if(s.x>window.innerWidth) s.x=0;
+if(s.x<0) s.x=window.innerWidth;
 
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-ctx.fillStyle="rgba(255,255,255,0.7)";
-ctx.fill();
+if(s.y>window.innerHeight) s.y=0;
+if(s.y<0) s.y=window.innerHeight;
+
+s.el.style.transform=`translate(${s.x}px,${s.y}px)`;
 
 });
 
-requestAnimationFrame(animateParticles);
+requestAnimationFrame(animateStones);
 
 }
 
-animateParticles();
+animateStones();
 
 
 
-/* resize fix */
+/* ======================
+gyroscopic effect
+====================== */
 
-window.addEventListener("resize",()=>{
+document.addEventListener("mousemove",e=>{
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let x=(window.innerWidth/2-e.pageX)/60;
+let y=(window.innerHeight/2-e.pageY)/60;
+
+stones.forEach(s=>{
+
+s.el.style.transform+=` rotateX(${y}deg) rotateY(${x}deg)`;
+
+});
 
 });
